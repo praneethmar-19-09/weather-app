@@ -1,12 +1,7 @@
-import { useState } from 'react'
+import Home from "../pages/Home";
 
-function App() {
+const App = () => {
+  return <Home />;
+};
 
-  return (
-    <>
-      <h1>weather app</h1>
-    </>
-  )
-}
-
-export default App
+export default App;
