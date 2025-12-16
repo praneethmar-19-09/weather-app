@@ -1,10 +1,12 @@
-
+import Home from './pages/Home';
+import { GlobalStyles } from './app.styled';
 
 const App: React.FC = () => {
 
   return (
     <>
-        <h1>Hello world!</h1>
+      <GlobalStyles />
+      <Home />
     </>
   );
 };
