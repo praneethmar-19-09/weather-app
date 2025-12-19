@@ -14,9 +14,11 @@ export const GlobalStyles = createGlobalStyle`
   box-sizing: border-box;
   font-family: inherit;
 }
+
 html {
   font-size: 16px;
 }
+
 body {
   font-family: 'Poppins', sans-serif;
   display: flex;
@@ -26,6 +28,7 @@ body {
   background-size: auto;
   font-family: 'Poppins', sans-serif;
 }
+
 #root {
   max-width: 960px;
   width: 100%;
