@@ -17,6 +17,7 @@ export const Title = styled.h1`
 color: ${(props) => props.theme.appTitleColor};
 */
 
+
 export const HeaderIconContainer = styled.div`
   display: flex;
   align-items: center;
