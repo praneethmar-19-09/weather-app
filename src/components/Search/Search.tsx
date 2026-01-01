@@ -10,40 +10,46 @@ import {
 
 
 
-const Search: React.FC = () => {
+interface SearchProps {
+  onWeatherData: (data: any, loading: boolean) => void;
+}
+
+const Search: React.FC<SearchProps> = ({ onWeatherData }) => {
   const { city, setCity, error, fetchCurrentLocation } = useCurrentLocation();
   const [weather, setWeather] = useState<any>(null);
   const [loading, setLoading] = useState(false);
   const [weatherError, setWeatherError] = useState<string | null>(null);
 
   const handleSearch = async () => {
-  if (!city.trim()) return;
+    if (!city.trim()) {
+      setWeatherError("Please enter a city name");
+      return;
+    }
 
-  try {
-    setLoading(true);
-    setWeatherError(null);
+    try {
+      setLoading(true);
+      onWeatherData(null, true);
+      setWeatherError(null);
 
-    const { lat, lon } = await getCoordinatesByCity(city);
+      const coordinates = await getCoordinatesByCity(city.trim());
+      const weatherData = await getWeatherForecast(coordinates.lat, coordinates.lon);
 
-    const weatherData = await getWeatherForecast(lat, lon);
-
-    setWeather(weatherData);
-  } catch (err: any) {
-    setWeatherError(err.message || "Something went wrong");
-  } finally {
-    setLoading(false);
-  }
-};
+      setWeather(weatherData);
+      onWeatherData(weatherData, false);
+    } catch (err: any) {
+      console.error("Search error:", err);
+      setWeatherError(err.message || "Something went wrong");
+      onWeatherData(null, false);
+    } finally {
+      setLoading(false);
+    }
+  };
 
 // const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
 //   if (e.key === "Enter") {
 //     handleSearch();
 //   }
 // };
-
-  console.log("Location state:", location);
-  console.log("City state:", city);
-  console.log("Weather state:", weather);
 
   return (
     <div>
@@ -54,20 +60,22 @@ const Search: React.FC = () => {
                 <div>
                     <img src={searchicon} alt="Search Icon" />
                 </div>
-                <SearchInput type="text" placeholder="Search for a city..." value={city} onChange={(e) => setCity(e.target.value)}/>
-                <SearchButton onClick={fetchCurrentLocation}>
+                <SearchInput 
+                    type="text" 
+                    placeholder="Search for a city..." 
+                    value={city} 
+                    onChange={(e) => setCity(e.target.value)}
+                />
+                <SearchButton type="button" onClick={fetchCurrentLocation}>
                     <div>
                         <img src={locatioicon} alt="Location Icon" />
                     </div>
                 </SearchButton>
-                {loading && <p>Loading weather...</p>}
-                {weather && (
-                    <pre>{JSON.stringify(weather.daily, null, 2)}</pre>
-                )}
             </SearchBarContainer>
-            {error && <p style={{ color: "red" }}>{error}</p>}  
-            {weatherError && <p style={{ color: "red" }}>{weatherError}</p>}
+            {loading && <p style={{ color: "#666", textAlign: "center", margin: "1rem 0" }}>Loading weather...</p>}
         </form>
+        {error && <p style={{ color: "red", textAlign: "center", margin: "0.5rem 0" }}>{error}</p>}  
+        {weatherError && <p style={{ color: "red", textAlign: "center", margin: "0.5rem 0" }}>{weatherError}</p>}
     </div>
   );
 }
